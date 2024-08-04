@@ -1,0 +1,32 @@
+[Start]
+gia_path = 
+yuanshen_path = 
+bgi_path = 
+launcher_path = 
+account = 
+password = 
+
+[Enigma]
+offset_per_degree = 
+
+[AutoFight]
+using_combat_file = 
+
+[AutoDaily]
+use_experience_point = True
+found_times = 2
+
+[Run]
+startgenshin = True
+update = False
+check_schedule = True
+run_enigma = True
+q_run_enigma = False
+run_daily_mission = True
+get_reward = True
+run_gia = False
+quit_genshin = True
+
+[Quit]
+key = 
+
