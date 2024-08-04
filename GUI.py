@@ -3,6 +3,8 @@ from pathlib import Path
 from tkinter import *
 from tkinter import filedialog
 import configparser
+import sys
+import logging
 import os
 import config
 path = config.get_config_directory()
@@ -19,7 +21,7 @@ config = configparser.ConfigParser()
 config.read(config_file_path)
 
 window = Tk()
-window.title("原神自动化程序 V1.0.0")
+window.title("原神自动化程序 V1.0.0                                    Github主页：https://github.com/PengZhangSDF/GIAA   欢迎提交issue")
 window.geometry("1032x795")
 window.configure(bg="#FFFFFF")
 button_images = {}
@@ -173,7 +175,6 @@ def start_genshin_settings():
         config.set("Start", "password", password_entry.get())
         with open(config_file_path, "w") as configfile:
             config.write(configfile)
-        append_to_console("已自动保存")
 
     Label(middle_frame, text="", bg='white').grid(row=8, column=100, sticky='w')
     Label(middle_frame, text="", bg='white').grid(row=49, column=100, sticky='w')
@@ -184,6 +185,7 @@ def start_genshin_settings():
     path_entry.bind("<KeyRelease>", save_settings)
     account_entry.bind("<KeyRelease>", save_settings)
     password_entry.bind("<KeyRelease>", save_settings)
+    window.after(500, save_settings)
     middle_frame.after(10, check_run_gia)
 
 
@@ -378,6 +380,7 @@ def daily_mission_settings():
             with open(config_file_path, "w") as configfile:
                 config.write(configfile)
                 append_to_console("路径已自动保存")
+    window.after(500, select_path)
 
     def check_run_gia():
         if config.getboolean("Run", "run_gia"):
@@ -405,10 +408,11 @@ def daily_mission_settings():
             config.set("AutoDaily", "found_times", found_times)
             with open(config_file_path, "w") as configfile:
                 config.write(configfile)
-            append_to_console("已自动保存")
 
 
     found_times_entry.bind("<KeyRelease>", save_settings)
+    found_times_entry.bind("<FocusOut>", save_settings)
+    found_times_entry.bind("<FocusIn>", save_settings)
     middle_frame.after(10, check_run_gia)
 
 
@@ -717,6 +721,33 @@ def append_to_console(text):
     console_output.insert(END, text + "\n")
     console_output.see(END)
 
+
+class ConsoleRedirect:
+    def __init__(self, widget):
+        self.widget = widget
+
+    def write(self, text):
+        self.widget.insert(END, text)
+        self.widget.see(END)
+
+    def flush(self):
+        pass
+
+class ConsoleHandler(logging.Handler):
+    def emit(self, record):
+        log_entry = self.format(record)
+        append_to_console(log_entry)
+
+# 重定向 stdout 到 Text 小部件
+sys.stdout = ConsoleRedirect(console_output)
+
+# 设置日志记录器
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+console_handler = ConsoleHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 window.resizable(False, False)
 
