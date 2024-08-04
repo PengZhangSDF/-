@@ -64,7 +64,14 @@ logger.info(f'日志输出：{FILE_NAME}')
 if IFRun_GIA:
     GIA_path = Tools.get_variable_value('gia_path')
     logger.info(f'启动GIA:{GIA_path}')
-    subprocess.Popen(GIA_path)
+    try:
+        subprocess.Popen(GIA_path)
+    except OSError:
+        logger.critical('请填写GIA路径')
+        logger.critical('请正确填写GIA路径')
+        logger.critical('不要尝试填写py文件等不可直接运行的文件')
+        exit()
+
 pydirectinput.moveRel(50, 50)
 time.sleep(8)
 # 更新游戏
@@ -74,7 +81,13 @@ if IFUpdate:
 # 启动原神
 if IFStartGenshin:
     yuanshen_path = Tools.get_variable_value('yuanshen_path')
-    subprocess.Popen(yuanshen_path)
+    try:
+        subprocess.Popen(yuanshen_path)
+    except OSError:
+        logger.critical('请填写原神路径')
+        logger.critical('请正确填写原神路径')
+        logger.critical('请不要尝试填写其他路径')
+        exit()
     logger.info(f'启动原神{yuanshen_path}')
     logger.info('启动原神')
     # 原神启动模块
